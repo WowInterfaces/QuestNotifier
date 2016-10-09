@@ -8,3 +8,4 @@ Modified:
 1. add quest progress announce switch in config UI.
 2. add quest complete announce switch in config UI.
 3. add quest progress announce in Party/Instance/Guild/Officer/Raid/World(SAY) channel.
+
