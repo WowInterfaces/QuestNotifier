@@ -101,7 +101,7 @@ function QuestNotifier:QUEST_LOG_UPDATE(self, event)
 					for j=1,#currList[i] do
 						if currList[i][j] and lastList[i][j] and currList[i][j].DoneNum and lastList[i][j].DoneNum then
 							if currList[i][j].DoneNum > lastList[i][j].DoneNum then
-								--QA_ItemMsg = L["Quest"]..currList[i].Link..QA_Progress ..": ".. currList[i][j].NeedItem ..":".. currList[i][j].DoneNum .. "/"..currList[i][j].NeedNum
+							--	QA_ItemMsg = L["Quest"]..currList[i].Link..QA_Progress ..": ".. currList[i][j].NeedItem ..":".. currList[i][j].DoneNum .. "/"..currList[i][j].NeedNum
 								QA_ItemMsg = QA_Progress ..":" .. currList[i][j].NeedItem ..": ".. currList[i][j].DoneNum .. "/"..currList[i][j].NeedNum
 								QA_ItemColorMsg = "QA:" .. RGBStr.G..L["Quest"].."|r".. RGBStr.P .. "["..currList[i].Level.."]|r "..currList[i].Link..RGBStr.G..QA_Progress..":|r"..RGBStr.K..currList[i][j].NeedItem..":|r"..RGBStr.Y..currList[i][j].DoneNum .. "/"..currList[i][j].NeedNum .."|r"
 								--[[ Show Detail message ]]--
@@ -163,7 +163,7 @@ end
 --[[ Sends a debugging message if debug is enabled and we have a message to send ]]--
 function QuestNotifier:SendDebugMsg(msg)
 	if(msg ~= nil and self.db.profile.settings.debug) then
-		QuestNotifier:Print("DEBUG :: "..msg)
+		QuestNotifier:Print("QN_DEBUG :: "..msg)
 	end
 end
 
@@ -173,11 +173,12 @@ function QuestNotifier:SendMsg(msg)
 	local announceIn = self.db.profile.announceIn
 	local announceTo = self.db.profile.announceTo
 
+	QuestNotifier:SendDebugMsg("QuestNotifier:SendMsg - "..tostring(msg))
+
 	if (msg ~= nil and self.db.profile.settings.enable) then
 		if(announceTo.chatFrame) then
 			if(announceIn.say) then
 				SendChatMessage(msg, "SAY")
-				QuestNotifier:SendDebugMsg("QuestNotifier:SendMsg(SAY) :: "..msg)
 			end
 
 			--[[ GetNumGroupMembers is group-wide; GetNumSubgroupMembers is confined to your group of 5 ]]--
@@ -186,39 +187,30 @@ function QuestNotifier:SendMsg(msg)
 				if(IsInGroup() and GetNumSubgroupMembers(LE_PARTY_CATEGORY_HOME) > 0) then
 					SendChatMessage(msg, "PARTY")
 				end
-
-				QuestNotifier:SendDebugMsg("QuestNotifier:SendMsg(PARTY) :: "..msg)
 			end
 
 			if(announceIn.instance) then
 				if (IsInInstance() and GetNumSubgroupMembers(LE_PARTY_CATEGORY_INSTANCE) > 0) then
 					SendChatMessage(msg, "INSTANCE_CHAT")
 				end
-
-				QuestNotifier:SendDebugMsg("QuestNotifier:SendMsg(INSTANCE) :: "..msg)
 			end
 
 			if(announceIn.guild) then
 				if(IsInGuild()) then
 					SendChatMessage(msg, "GUILD")
 				end
-
-				QuestNotifier:SendDebugMsg("QuestNotifier:SendMsg(GUILD) :: "..msg)
 			end
 
 			if(announceIn.officer) then
 				if(IsInGuild()) then
 					SendChatMessage(msg, "OFFICER")
 				end
-
-				QuestNotifier:SendDebugMsg("QuestNotifier:SendMsg(OFFICER) :: "..msg)
 			end
 
 			if(announceIn.whisper) then
 				local who = announceIn.whisperWho
 				if(who ~= nil and who ~= "") then
 					SendChatMessage(msg, "WHISPER", nil, who)
-					QuestNotifier:SendDebugMsg("QuestNotifier:SendMsg(WHISPER) :: "..who.."-"..msg)
 				end
 			end
 		end
@@ -236,7 +228,6 @@ function QuestNotifier:SendMsg(msg)
 		end
 	end
 
-	QuestNotifier:SendDebugMsg("QuestNotifier:SendMsg - "..msg)
 end
 
 function RScanQuests()
@@ -267,12 +258,12 @@ function RScanQuests()
 				ObjectiveTracker_Update()
 			end
 			for i=1,GetNumQuestLeaderBoards(qIndex) do
-				local leaderboardTxt, itemType, isDone = GetQuestLogLeaderBoard (i,qIndex);
+				local leaderboardTxt, itemType, isDone = GetQuestLogLeaderBoard(i,qIndex);
 			--	local j, k, itemName, numItems, numNeeded = string.find(leaderboardTxt, "(.*)"..splitdot.."%s*([%d]+)%s*/%s*([%d]+)");
 				local _, _, numItems, numNeeded, itemName = find(leaderboardTxt, "(%d+)/(%d+) ?(.*)")
 			--	local numstr, itemName = strsplit(" ", leaderboardTxt)
 			--	local numItems, numNeeded = strsplit("/", numstr)
-				-- print(qID,qTitle,qLevel,qTag,qGroup,qisHeader,qisCollapsed,qisComplete,qisDaily,leaderboardTxt,itemType,isDone,j,k,itemName,numItems,numNeeded)
+			--	print(qID,qTitle,qLevel,qTag,qGroup,qisHeader,qisCollapsed,qisComplete,qisDaily,leaderboardTxt,itemType,isDone,j,k,itemName,numItems,numNeeded)
 				QuestList[qID][i]={
 					NeedItem = itemName,      -- String
 					NeedNum  = numNeeded,     -- Integer
