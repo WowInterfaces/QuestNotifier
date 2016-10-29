@@ -118,7 +118,7 @@ function QuestNotifier:QUEST_LOG_UPDATE(self, event)
 					if (currList[i].Group > 1) and currList[i].Tag then
 						QA_ItemMsg = L["Quest"].."["..currList[i].Level.."]".."["..currList[i].Tag..currList[i].Group.."]"..currList[i].Link.." "..L["Complete"]
 					else
-						QA_ItemMsg = L["Quest"].."["..currList[i].Level.."]"..currList[i].Link.." "..L["Complete"]
+						QA_ItemMsg = L["Quest"].."["..currList[i].Level.."]"..tostring(currList[i].Link).." "..L["Complete"]
 					end
 					QA_ItemColorMsg = "QA:" .. RGBStr.G .. L["Quest"] .. "|r" .. RGBStr.P .. "[" .. currList[i].Level .. "]|r " .. currList[i].Link .. TagStr .. RGBStr.K .. L["Complete"] .. "|r"
 					QuestNotifier:SendMsg(QA_ItemMsg)
@@ -239,7 +239,7 @@ function RScanQuests()
 		local qTitle, qLevel, qGroup, qisHeader, qisCollapsed, qisComplete, frequency, qID = GetQuestLogTitle(qIndex)
 		local qTag, qTagName = GetQuestTagInfo(qID)
 		if not qisHeader then
-			qLink = GetQuestLink(qIndex)
+			qLink = GetQuestLink(qID)
 			QuestList[qID]={
 				Title    =qTitle,          -- String
 				Level    =qLevel,          -- Integer
